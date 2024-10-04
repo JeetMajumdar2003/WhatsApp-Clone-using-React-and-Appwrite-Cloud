@@ -1,0 +1,415 @@
+/* Global settings */
+:root {
+  --mainBgColor: #14141f;
+  --secondaryBgColor: #1b1b27;
+  --borderColor1: #282939;
+  --borderColor2: #4f5669;
+  --textColorMain: #fff;
+  --textColorSecondary: #e2e3e8;
+  --themeColorMain: #db1a5a;
+  --themeColorSecondary: #386fd2;
+  --inputBgColor: #2a2a3b;
+  --inputBorderColor: #3a3a4b;
+  --buttonHoverColor: #ff4d6d;
+}
+
+[data-theme="light"] {
+  --mainBgColor: #f0f0f0;
+  --secondaryBgColor: #ffffff;
+  --borderColor1: #dcdcdc;
+  --borderColor2: #b0b0b0;
+  --textColorMain: #000;
+  --textColorSecondary: #ffffff;
+  --themeColorMain: #007bff;
+  --themeColorSecondary: #6c757d;
+  --inputBgColor: #e9ecef;
+  --inputBorderColor: #ced4da;
+  --buttonHoverColor: #0056b3;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell,
+    'Open Sans', 'Helvetica Neue', sans-serif;
+}
+
+body {
+  background-color: var(--mainBgColor);
+  color: var(--textColorMain);
+  transition: background-color 0.3s, color 0.3s;
+}
+
+a {
+  color: #40e0d0;
+}
+
+.container {
+  max-width: 800px;
+  margin: 20px auto;
+  padding: 1em;
+  background-color: var(--secondaryBgColor);
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  transition: background-color 0.3s;
+}
+
+/* Form Input Styling */
+input[type="text"],
+input[type="password"],
+input[type="email"],
+textarea {
+  background: var(--inputBgColor);
+  border: 1px solid var(--inputBorderColor);
+  padding: 0.8rem;
+  border-radius: 10px;
+  width: 100%;
+  color: var(--textColorMain);
+  outline: none;
+  font-size: 16px;
+  resize: none;
+  overflow-y: auto;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.3s, color 0.3s;
+}
+
+textarea::-webkit-scrollbar {
+  display: none;
+}
+
+/* Button Styling */
+.btn {
+  padding: 0.5em 1em;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.btn--main {
+  background-color: var(--themeColorMain);
+  color: #fff;
+}
+
+.btn--secondary {
+  background-color: var(--themeColorSecondary);
+  padding: 0.5em;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.btn:hover {
+  background-color: var(--buttonHoverColor);
+}
+
+/* Room Styling */
+.room--container {
+  padding: 2em;
+  background-color: var(--secondaryBgColor);
+  border-radius: 0 0 10px 10px;
+  border: 1px solid var(--borderColor1);
+}
+
+#message--form {
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+  background-color: var(--inputBgColor);
+  border-radius: 10px;
+  padding: 0.5em;
+}
+
+.message-input-container {
+  display: flex;
+  align-items: center;
+  flex-grow: 1;
+  background-color: var(--inputBgColor);
+  border-radius: 10px;
+}
+
+textarea {
+  flex-grow: 1;
+  background: transparent;
+  border: none;
+  padding: 0.8rem;
+  color: var(--textColorMain);
+}
+
+.message-actions {
+  display: flex;
+  align-items: center;
+}
+
+.action-button {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  color: var(--textColorMain);
+  padding: 0.3em;
+  font-size: 1.2em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.3s;
+}
+
+.action-button:hover {
+  color: var(--buttonHoverColor);
+}
+
+.message--wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: column;
+  gap: 0.5em;
+  margin: 1em 0;
+  padding: 1em;
+  background-color: var(--inputBgColor);
+  border-radius: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  animation: slideIn 0.5s ease-in-out;
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateX(-10%); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+.message--header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.message--body {
+  padding: 0.5em 0;
+  color: var(--textColorSecondary);
+  background-color: var(--themeColorMain);
+  padding: 1em;
+  border-radius: 10px;
+  width: fit-content;
+  max-width: 100%;
+  word-wrap: break-word;
+}
+
+.message--body--owner {
+  border: 1px solid var(--themeColorMain);
+  background-color: var(--secondaryBgColor);
+  align-self: flex-end;
+}
+
+.message-timestamp {
+  margin-left: 1em;
+  color: var(--textColorMain);
+  font-size: 0.8em;
+}
+
+/* Theme Toggle Button */
+.theme-toggle {
+  display: flex;
+  justify-content: flex-end; /* Align to the right */
+  margin-bottom: 1em;
+  gap: 1em;
+  position: fixed; /* Fixed position to stay in the same place on scroll */
+  right: 1em; /* Fixed position to the right side */
+  top: 1em; /* Adjust the top position as needed */
+  z-index: 1000; /* Ensure it stays on top of other elements */
+}
+
+.checkbox{
+  display: none;
+}
+
+.theme-toggle label {
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+  cursor: pointer;
+}
+
+.theme-toggle label span {
+  color: var(--textColorMain);
+}
+
+.theme-toggle label span:last-child {
+  font-size: 0.8em;
+}
+
+.theme-toggle label input {
+  display: none;
+}
+
+.theme-toggle label .slider {
+  position: relative;
+  display: inline-block;
+  width: 40px;
+  height: 20px;
+  border-radius: 20px;
+  background-color: var(--borderColor1);
+  transition: background-color 0.3s;
+}
+
+.theme-toggle label .slider:before {
+  position: absolute;
+  content: "";
+  height: 16px;
+  width: 16px;
+  left: 2px;
+  bottom: 2px;
+  border-radius: 50%;
+  background-color: var(--themeColorMain);
+  transition: transform 0.3s;
+}
+
+/* .theme-toggle input:checked + .slider {
+  background-color: var(--themeColorMain);
+} */
+
+.theme-toggle input:checked + .slider:before {
+  transform: translateX(20px);
+}
+
+.theme-toggle button {
+  background-color: var(--themeColorMain);
+  color: #fff;
+  padding: 0.5em 1em;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.theme-toggle button:hover {
+  background-color: var(--buttonHoverColor);
+}
+
+/* Typing Indicator */
+.typing-indicator {
+  color: var(--textColorSecondary);
+  font-style: italic;
+  margin-bottom: 1em;
+  text-align: center;
+  animation: fadeInOut 1.5s infinite;
+}
+
+@keyframes fadeInOut {
+  0%, 100% { opacity: 0; }
+  50% { opacity: 1; }
+}
+
+/* Online Users Styling */
+.online-users {
+  margin-bottom: 1em;
+  padding: 1em;
+  background-color: var(--secondaryBgColor);
+  border-radius: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.online-user {
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+  padding: 0.5em 0;
+  color: var(--textColorMain);
+}
+
+.online-indicator {
+  width: 10px;
+  height: 10px;
+  background-color: #4caf50;
+  border-radius: 50%;
+}
+
+/* Emoji Picker Styling */
+.emoji-picker-container {
+  position: fixed;
+  bottom: 130px;
+  left: 200px;
+  z-index: 1000;
+  background-color: var(--secondaryBgColor);
+  border: 1px solid var(--borderColor1);
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  padding: 1em;
+}
+
+/* Responsive Design */
+@media (max-width: 600px) {
+  .container {
+    padding: 0.5em;
+  }
+
+  .message--body {
+    max-width: 100%;
+  }
+
+  .online-users {
+    padding: 0.5em;
+  }
+
+  .emoji-picker-container {
+    bottom: 130px;
+    left: 10px;
+  }
+}
+
+.file-preview {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #f1f1f1;
+  padding: 10px;
+  border-radius: 5px;
+  margin-top: 10px;
+}
+
+.file-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.file-actions a {
+  margin-left: 10px;
+  text-decoration: none;
+  color: #007bff;
+}
+
+.file-upload-popup {
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 20px;
+  width: 300px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  font-family: Arial, sans-serif;
+}
+
+.file-info {
+  margin-bottom: 20px;
+}
+
+.file-info p {
+  margin: 5px 0;
+}
+
+.file-actions {
+  display: flex;
+  justify-content: space-between;
+}
+
+.file-actions button {
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  padding: 10px 20px;
+  cursor: pointer;
+}
+
+.file-actions button:hover {
+  background-color: #0056b3;
+}
