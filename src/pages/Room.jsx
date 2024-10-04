@@ -1,47 +1,87 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { databases, storage, DATABASE_ID, COLLECTION_ID_MESSAGES, BUCKET_ID } from '../appwriteConfig';
+import client, { databases, DATABASE_ID, COLLECTION_ID_MESSAGES } from '../appwriteConfig';
 import { ID, Query } from 'appwrite';
-import { Smile, Send, Paperclip, Mic } from 'lucide-react';
+import { Smile, Send, Trash2 } from 'lucide-react';
 import EmojiPicker from 'emoji-picker-react';
-// import FilePreview from '../components/FilePreview';
-// import FileUploadPopup from '../components/FileUploadPopup';
 
 const Room = () => {
     const [messages, setMessages] = useState([]);
-    // const [file, setFile] = useState(null);
     const [messageBody, setMessageBody] = useState('');
     const [isDarkMode, setIsDarkMode] = useState(true);
-    const [isTyping, setIsTyping] = useState(false);
     const [showEmojiPicker, setShowEmojiPicker] = useState(false);
-    // const [showFileUploadPopup, setShowFileUploadPopup] = useState(false);
     const [onlineUsers] = useState(['Alice', 'Bob', 'Charlie']); // Simulated online users
     const messagesEndRef = useRef(null);
-    // const fileInputRef = useRef(null);
 
+    // Fetch messages and set theme on component mount and theme change
     useEffect(() => {
         getMessages();
         document.body.dataset.theme = isDarkMode ? 'dark' : 'light';
     }, [isDarkMode]);
 
+    // Scroll to bottom when messages change
     useEffect(() => {
         scrollToBottom();
     }, [messages]);
 
+    // Subscribe to real-time updates for messages
+    useEffect(() => {
+        // Fetch initial messages
+        getMessages();
+
+        // Log initial state
+        console.log('Subscribing to real-time updates for messages');
+
+        // Subscribe to real-time updates
+        const unsubscribe = client.subscribe(`databases.${DATABASE_ID}.collections.${COLLECTION_ID_MESSAGES}.documents`, response => {
+            // Log the response for debugging
+            console.log('Real-time update received:', response);
+
+            // Check if the response contains the expected events
+            if (response.events.includes('databases.*.collections.*.documents.*.create')) {
+                console.log('A MESSAGE WAS CREATED');
+                console.log('New message payload:', response.payload);
+
+                // Update the messages state with the new message
+                setMessages((prevMessages) => [...prevMessages, response.payload]);
+            }
+            else if (response.events.includes('databases.*.collections.*.documents.*.delete')) {
+                console.log('A MESSAGE WAS DELETED');
+                console.log('Deleted message ID:', response.payload.$id);
+
+                // Update the messages state by removing the deleted message
+                setMessages((prevMessages) => prevMessages.filter((msg) => msg.$id !== response.payload.$id));
+            }
+            else {
+                // Log unexpected events for further investigation
+                console.log('Unexpected event type:', response.events);
+            }
+        }, error => {
+            // Log the error for debugging
+            console.error('Subscription error:', error);
+        });
+
+        // Cleanup subscription on component unmount
+        return () => {
+            console.log('Unsubscribing from real-time updates for messages');
+            unsubscribe();
+        };
+    }, []);
+
+    // Scroll to the bottom of the messages container
     const scrollToBottom = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
     };
 
+    // Toggle between dark and light mode
     const handleThemeToggle = () => {
         setIsDarkMode(!isDarkMode);
+        console.log('Theme toggled:', isDarkMode ? 'Light Mode' : 'Dark Mode');
     };
 
-    const handleTyping = (e) => {
-        setMessageBody(e.target.value);
-        setIsTyping(e.target.value.length > 0);
-    };
-
+    // Handle emoji click and append to message body
     const handleEmojiClick = (emojiObject) => {
         setMessageBody((prevMsg) => prevMsg + emojiObject.emoji);
+        console.log('Emoji clicked:', emojiObject.emoji);
     };
 
     // Close emoji picker when clicking outside of it
@@ -49,6 +89,7 @@ const Room = () => {
         const handleClickOutside = (event) => {
             if (showEmojiPicker && !event.target.closest('.emoji-picker-container') && !event.target.closest('.action-button')) {
                 setShowEmojiPicker(false);
+                console.log('Clicked outside emoji picker');
             }
         };
 
@@ -64,60 +105,15 @@ const Room = () => {
         };
     }, [showEmojiPicker]);
 
-    // const handleFileChange = (e) => {
-    //     const selectedFile = e.target.files[0];
-    //     if (selectedFile) {
-    //         const fileDetails = {
-    //             fileName: selectedFile.name,
-    //             fileType: selectedFile.type,
-    //             fileSize: `${(selectedFile.size / 1024).toFixed(2)} KB`,
-    //         };
-    //         setFile(fileDetails);
-    //         setShowFileUploadPopup(true);
-    //     }
-    // };
-
-    // const handleFileUpload = async () => {
-    //     if (file) {
-    //         try {
-    //             const response = await storage.createFile(BUCKET_ID, ID.unique(), file);
-    //             const fileUrl = storage.getFileView(BUCKET_ID, response.$id);
-
-    //             setFile({
-    //                 ...file,
-    //                 fileId: response.$id,
-    //                 fileURL: fileUrl,
-    //             });
-
-    //             setMessageBody((prevMsg) => prevMsg + `[File: ${file.fileName}]`);
-    //             setShowFileUploadPopup(false);
-    //         } catch (error) {
-    //             console.error('Error uploading file:', error);
-    //         }
-    //     }
-    // };
-
+    // Handle message submission
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (!messageBody.trim()) return;
 
-        setIsTyping(false);
-
-        let payload = {
+        const payload = {
             body: messageBody,
-            username: 'CurrentUser', // Replace with actual user management
+            username: 'CurrentUser', // replace with actual user management
         };
-
-        // if (file) {
-        //     payload = {
-        //         ...payload,
-        //         fileId: file.fileId,
-        //         fileName: file.fileName,
-        //         fileType: file.fileType,
-        //         fileSize: file.fileSize,
-        //         fileURL: file.fileURL,
-        //     };
-        // }
 
         try {
             const response = await databases.createDocument(
@@ -126,23 +122,38 @@ const Room = () => {
                 ID.unique(),
                 payload
             );
-            setMessages((prevMessages) => [...prevMessages, response]);
-            // Reset file state after sending the message
-            // setFile(null);
+            // setMessages((prevMessages) => [...prevMessages, response]);
             setMessageBody('');
+            console.log('Message send:', response);
         } catch (error) {
             console.error('Error creating message:', error);
         }
     };
 
+    // Handle message deletion
+    const deleteMessage = async (messageId) => {
+        try {
+            await databases.deleteDocument(DATABASE_ID, COLLECTION_ID_MESSAGES, messageId);
+            // setMessages((prevMessages) => prevMessages.filter((msg) => msg.$id !== messageId));
+            console.log('Message deleted:', messageId);
+        } catch (error) {
+            console.error('Error deleting message:', error);
+        }
+    };
+
+    // Fetch messages from the database
     const getMessages = async () => {
         try {
             const response = await databases.listDocuments(
                 DATABASE_ID,
                 COLLECTION_ID_MESSAGES,
-                [Query.orderDesc('$createdAt'), Query.limit(50)]
+                [
+                    // Query.orderDesc('$createdAt'),
+                    Query.limit(50)
+                ]
             );
-            setMessages(response.documents.reverse());
+            setMessages(response.documents);
+            console.log('Messages fetched:', response.documents);
         } catch (error) {
             console.error('Error fetching messages:', error);
         }
@@ -158,9 +169,9 @@ const Room = () => {
                         onChange={handleThemeToggle}
                     />
                     <span className="slider"></span>
-                    <button onClick={handleThemeToggle}>
+                    {/* <button onClick={handleThemeToggle}>
                         {isDarkMode ? '☀️ Light Mode' : '🌙 Dark Mode'}
-                    </button>
+                    </button> */}
                 </label>
             </div>
             <main className="container">
@@ -178,28 +189,21 @@ const Room = () => {
                         {messages.map((message) => (
                             <div key={message.$id} className={`message--wrapper ${message.username === 'CurrentUser' ? 'current-user' : ''}`}>
                                 <div className="message--header">
-                                    <h3>{message.username}</h3>
+                                    <h3>{message?.username}</h3>
                                     <small className="message-timestamp">
                                         {new Date(message.$createdAt).toLocaleString()}
+                                        <button type="button" className="action-button" onClick={() => { deleteMessage(message.$id) }}>
+                                            <Trash2 />
+                                        </button>
                                     </small>
                                 </div>
                                 <div className="message--body">
                                     <p>{message.body}</p>
-                                    {/* {message.fileId && (
-                                        <FilePreview
-                                            fileName={message.fileName}
-                                            fileType={message.fileType}
-                                            fileSize={message.fileSize}
-                                            fileURL={message.fileURL}
-                                        />
-                                    )} */}
                                 </div>
                             </div>
                         ))}
                         <div ref={messagesEndRef} />
                     </div>
-
-                    {isTyping && <div className="typing-indicator">Someone is typing...</div>}
 
                     <form id="message--form" onSubmit={handleSubmit}>
                         <div className="message-input-container">
@@ -212,26 +216,16 @@ const Room = () => {
                                         <EmojiPicker onEmojiClick={handleEmojiClick} />
                                     </div>
                                 )}
-                                <button type="button" className="action-button" onClick={() => fileInputRef.current.click()}>
-                                    <Paperclip />
-                                </button>
-                                {/* <input
-                                    type="file"
-                                    ref={fileInputRef}
-                                    style={{ display: 'none' }}
-                                    onChange={handleFileChange}
-                                /> */}
                             </div>
                             <textarea
+                                required
+                                maxLength="1000"
                                 name="message"
                                 placeholder="Type your message here..."
-                                onChange={handleTyping}
+                                onChange={(e) => setMessageBody(e.target.value)}
                                 value={messageBody}
                             />
                             <div className="message-actions">
-                                <button type="button" className="action-button">
-                                    <Mic />
-                                </button>
                                 <button type="submit" className="action-button" disabled={!messageBody.trim()}>
                                     <Send />
                                 </button>
@@ -240,13 +234,6 @@ const Room = () => {
                     </form>
                 </div>
             </main>
-            {/* {showFileUploadPopup && (
-                <FileUploadPopup
-                    file={file}
-                    onClose={() => setShowFileUploadPopup(false)}
-                    onConfirm={handleFileUpload}
-                />
-            )} */}
         </>
     );
 };
