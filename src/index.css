@@ -1,31 +1,33 @@
 /* Global settings */
 :root {
   /* Light Theme Colors */
-  --mainBgColor: #f2f2f2;
+  --mainBgColor: #f4f4f4;
   --secondaryBgColor: #ffffff;
-  --borderColor: #d0d0d0;
+  --borderColor: #e0e0e0;
   --textColorMain: #222222;
   --textColorSecondary: #666666;
-  --themeColorMain: #00796b; /* Teal for a fresh feel */
-  --themeColorSecondary: #004d40;
+  --themeColorMain: #009688; /* Brighter Teal */
+  --themeColorSecondary: #00796b;
   --inputBgColor: #ffffff;
   --inputBorderColor: #cccccc;
-  --sentMessageBg: #e8f5e9; /* Light green for sent messages */
+  --sentMessageBg: #e0f7fa; /* Slightly brighter light green for sent messages */
   --receivedMessageBg: #ffffff;
+  --msgBg: #0000001f;
 
   /* Shared Colors */
-  --accentColor: #ff5722; /* Accent color for highlights, e.g., button hover */
+  --accentColor: #ff7043; /* Slightly brighter accent color */
 
   /* Dark Theme Colors */
-  --darkMainBgColor: #1b1b1b;
-  --darkSecondaryBgColor: #292929;
-  --darkBorderColor: #444444;
-  --darkTextColorMain: #ffffff;
-  --darkTextColorSecondary: #bdbdbd;
-  --darkInputBgColor: #333333;
-  --darkInputBorderColor: #555555;
-  --darkSentMessageBg: #004d40;
-  --darkReceivedMessageBg: #2e3b3f;
+  --darkMainBgColor: #121212;
+  --darkSecondaryBgColor: #1e1e1e;
+  --darkBorderColor: #333333;
+  --darkTextColorMain: #e0e0e0;
+  --darkTextColorSecondary: #b0b0b0;
+  --darkInputBgColor: #262626;
+  --darkInputBorderColor: #444444;
+  --darkSentMessageBg: #00796b;
+  --darkReceivedMessageBg: #37474f;
+  --darkMsgBg: #0308085c;
 }
 
 [data-theme="dark"] {
@@ -38,6 +40,7 @@
   --inputBorderColor: var(--darkInputBorderColor);
   --sentMessageBg: var(--darkSentMessageBg);
   --receivedMessageBg: var(--darkReceivedMessageBg);
+  --msgBg: var(--darkMsgBg);
 }
 
 /* Reset & Global Styles */
@@ -69,7 +72,7 @@ body {
   display: flex;
   flex-direction: column;
   background-color: var(--secondaryBgColor);
-  border-radius: 12px;
+  border-radius: 10px;
   overflow: hidden;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
@@ -110,12 +113,17 @@ body {
   gap: 10px;
 }
 
+.messages-container::-webkit-scrollbar{
+  display: none;
+}
+
 .message--wrapper {
   max-width: 70%;
   padding: 10px;
   align-self: flex-start;
   border-radius: 15px;
   transition: transform 0.2s ease-in-out;
+  background-color: var(--msgBg);
 }
 
 .message--wrapper:hover {
@@ -128,26 +136,30 @@ body {
 
 .message--header {
   display: flex;
-  justify-content: space-evenly;
+  justify-content: space-between;
   align-items: center;
-  margin-bottom: 5px;
+  /* margin-bottom: 5px; */
   gap: 1rem;
 }
 
 .message--header h3 {
   font-size: 0.85em;
   color: var(--textColorSecondary);
-  font-weight: 500px;
+  font-weight: 500;
+  margin: 0;
 }
 
 .message-timestamp {
   font-size: 0.75em;
   color: var(--textColorSecondary);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
 .message--body {
   background-color: var(--receivedMessageBg);
-  padding: 15px;
+  padding: 10px;
   border-radius: 12px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   color: var(--textColorMain);
@@ -182,16 +194,22 @@ body {
   border: 1px solid var(--inputBorderColor);
 }
 
+/* Styling for the textarea input */
 textarea {
   flex: 1;
   border: none;
   background-color: transparent;
-  resize: none;
+  resize: none; /* Prevent resizing */
   height: 40px;
   max-height: 150px;
   padding: 5px;
   font-size: 1em;
   color: var(--textColorMain);
+  /* scrollbar-width: none; /* For Firefox */
+}
+
+textarea::-webkit-scrollbar {
+  display: none; /* For Chrome, Safari, and Opera */
 }
 
 textarea:focus {

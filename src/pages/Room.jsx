@@ -159,6 +159,13 @@ const Room = () => {
         }
     };
 
+    // Handle keydown event in the textarea
+    const handleKeyDown = (e) => {
+        if (e.key === 'Enter' && e.shiftKey) {
+            handleSubmit(e);
+        }
+    };
+
     return (
         <>
             <div className="theme-toggle">
@@ -224,6 +231,7 @@ const Room = () => {
                                 placeholder="Type your message here..."
                                 onChange={(e) => setMessageBody(e.target.value)}
                                 value={messageBody}
+                                onKeyDown={handleKeyDown}
                             />
                             <div className="message-actions">
                                 <button type="submit" className="action-button" disabled={!messageBody.trim()}>
