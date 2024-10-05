@@ -3,56 +3,51 @@ import { account } from "../appwriteConfig";
 import { useNavigate } from "react-router-dom";
 import { ID } from "appwrite";
 
-const AuthContext = createContext()
+const AuthContext = createContext();
 
 const AuthProvider = ({ children }) => {
+    const [loading, setLoading] = useState(true);
+    const [user, setUser] = useState(null);
 
-    const [loading, setLoading] = useState(true)
-    const [user, setUser] = useState(null)
-
-    const navigate = useNavigate()
+    const navigate = useNavigate();
 
     useEffect(() => {
-        getUserOnLoad()
-    }, [])
+        getUserOnLoad();
+    }, []);
 
     const getUserOnLoad = async () => {
         try {
-            const accountDetails = await account.get()
-            console.log(accountDetails)
-            setUser(accountDetails)
+            const accountDetails = await account.get();
+            setUser(accountDetails);
         } catch (error) {
-            console.log(error);
+            console.error(error);
         }
-        setLoading(false)
-    }
+        setLoading(false);
+    };
 
     const handleUserLogin = async (e, credentials) => {
-        e.preventDefault()
+        e.preventDefault();
 
         try {
-            const response = await account.createEmailPasswordSession(credentials.email, credentials.password)
-            console.log("Login response: ", response);
-
-            const accountDetails = await account.get()
-            setUser(accountDetails)
+            await account.createEmailPasswordSession(credentials.email, credentials.password);
+            const accountDetails = await account.get();
+            setUser(accountDetails);
             // redirect to home page
-            navigate('/')
+            navigate('/');
         } catch (error) {
-            console.log(error);
-            
+            console.error(error);
         }
-    }
+    };
 
     const handleUserLogout = async () => {
         try {
-            await account.deleteSession('current')
-            setUser(null)
-            navigate('/login')
+            await account.deleteSession('current');
+            setUser(null);
+            navigate('/login');
         } catch (error) {
-            console.log(error);
+            console.error(error);
         }
-    }
+    };
 
     const handleUserRegister = async (e, credentials) => {
         e.preventDefault();
@@ -65,13 +60,12 @@ const AuthProvider = ({ children }) => {
 
         try {
             // Create a new user account
-            const response = await account.create(
+            await account.create(
                 ID.unique(),
                 credentials.email,
                 credentials.password,
                 credentials.username
-            )
-            console.log("Register response: ", response);
+            );
             // Login the user directly after registration
             await account.createEmailPasswordSession(credentials.email, credentials.password);
             // Get account details and set user state
@@ -81,7 +75,7 @@ const AuthProvider = ({ children }) => {
             // Redirect to home page
             navigate('/');
         } catch (error) {
-            console.log(error);
+            console.error(error);
         }
     };
 
@@ -90,18 +84,18 @@ const AuthProvider = ({ children }) => {
         handleUserLogin,
         handleUserLogout,
         handleUserRegister
-    }
+    };
 
     return (
         <AuthContext.Provider value={contextData}>
             {loading ? <h1 className="loading">Loading...</h1> : children}
         </AuthContext.Provider>
-    )
-}
+    );
+};
 
 // useAuth hook
 const useAuth = () => {
-    return useContext(AuthContext)
-}
+    return useContext(AuthContext);
+};
 
-export { AuthProvider, AuthContext, useAuth }
+export { AuthProvider, AuthContext, useAuth };

@@ -1,7 +1,7 @@
 import React from 'react';
 import { LogOut } from 'lucide-react';
 import { useAuth } from '../utils/AuthContext';
-import { Link } from 'react-router-dom'; // Ensure you have the correct import for Link
+import { Link } from 'react-router-dom';
 
 function Header() {
     const { user, handleUserLogout } = useAuth();

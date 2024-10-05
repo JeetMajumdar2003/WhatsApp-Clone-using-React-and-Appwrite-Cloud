@@ -31,41 +31,23 @@ const Room = () => {
         // Fetch initial messages
         getMessages();
 
-        // Log initial state
-        console.log('Subscribing to real-time updates for messages');
-
         // Subscribe to real-time updates
         const unsubscribe = client.subscribe(`databases.${DATABASE_ID}.collections.${COLLECTION_ID_MESSAGES}.documents`, response => {
-            // Log the response for debugging
-            console.log('Real-time update received:', response);
-
             // Check if the response contains the expected events
             if (response.events.includes('databases.*.collections.*.documents.*.create')) {
-                console.log('A MESSAGE WAS CREATED');
-                console.log('New message payload:', response.payload);
-
                 // Update the messages state with the new message
                 setMessages((prevMessages) => [...prevMessages, response.payload]);
             }
             else if (response.events.includes('databases.*.collections.*.documents.*.delete')) {
-                console.log('A MESSAGE WAS DELETED');
-                console.log('Deleted message ID:', response.payload.$id);
-
                 // Update the messages state by removing the deleted message
                 setMessages((prevMessages) => prevMessages.filter((msg) => msg.$id !== response.payload.$id));
             }
-            else {
-                // Log unexpected events for further investigation
-                console.log('Unexpected event type:', response.events);
-            }
         }, error => {
-            // Log the error for debugging
             console.error('Subscription error:', error);
         });
 
         // Cleanup subscription on component unmount
         return () => {
-            console.log('Unsubscribing from real-time updates for messages');
             unsubscribe();
         };
     }, []);
@@ -78,13 +60,11 @@ const Room = () => {
     // Toggle between dark and light mode
     const handleThemeToggle = () => {
         setIsDarkMode(!isDarkMode);
-        console.log('Theme toggled:', isDarkMode ? 'Light Mode' : 'Dark Mode');
     };
 
     // Handle emoji click and append to message body
     const handleEmojiClick = (emojiObject) => {
         setMessageBody((prevMsg) => prevMsg + emojiObject.emoji);
-        console.log('Emoji clicked:', emojiObject.emoji);
     };
 
     // Close emoji picker when clicking outside of it
@@ -92,7 +72,6 @@ const Room = () => {
         const handleClickOutside = (event) => {
             if (showEmojiPicker && !event.target.closest('.emoji-picker-container') && !event.target.closest('.action-button')) {
                 setShowEmojiPicker(false);
-                console.log('Clicked outside emoji picker');
             }
         };
 
@@ -131,9 +110,7 @@ const Room = () => {
                 payload,
                 permissions
             );
-            // setMessages((prevMessages) => [...prevMessages, response]);
             setMessageBody('');
-            console.log('Message send:', response);
         } catch (error) {
             console.error('Error creating message:', error);
         }
@@ -143,8 +120,6 @@ const Room = () => {
     const deleteMessage = async (messageId) => {
         try {
             await databases.deleteDocument(DATABASE_ID, COLLECTION_ID_MESSAGES, messageId);
-            // setMessages((prevMessages) => prevMessages.filter((msg) => msg.$id !== messageId));
-            console.log('Message deleted:', messageId);
         } catch (error) {
             console.error('Error deleting message:', error);
         }
@@ -157,12 +132,10 @@ const Room = () => {
                 DATABASE_ID,
                 COLLECTION_ID_MESSAGES,
                 [
-                    // Query.orderDesc('$createdAt'),
                     Query.limit(50)
                 ]
             );
             setMessages(response.documents);
-            console.log('Messages fetched:', response.documents);
         } catch (error) {
             console.error('Error fetching messages:', error);
         }
@@ -185,9 +158,6 @@ const Room = () => {
                         onChange={handleThemeToggle}
                     />
                     <span className="slider"></span>
-                    {/* <button onClick={handleThemeToggle}>
-                        {isDarkMode ? '☀️ Light Mode' : '🌙 Dark Mode'}
-                    </button> */}
                 </label>
             </div>
             <main className="container">
