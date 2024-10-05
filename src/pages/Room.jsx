@@ -163,9 +163,9 @@ const Room = () => {
             <main className="container">
                 <Header />
                 <div className="room--container">
-                    <div className="online-users">
+                    {/* <div className="online-users">
                         <h3>Online Users</h3>
-                    </div>
+                    </div> */}
                     <div className="messages-container">
                         {messages.map((message) => (
                             <div key={message.$id} className={`message--wrapper ${message.username === user.name ? 'current-user' : ''}`}>

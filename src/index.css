@@ -77,19 +77,6 @@ body {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
-.online-users {
-  padding: 10px 20px;
-  background-color: var(--themeColorMain);
-  color: #ffffff;
-  display: flex;
-  flex-direction: column;
-}
-
-.online-users h3 {
-  margin-bottom: 10px;
-  font-weight: 600;
-}
-
 .messages-container {
   flex: 1;
   overflow-y: auto;
@@ -234,12 +221,25 @@ textarea:focus {
 }
 
 /* Theme toggle styling */
-/* Theme toggle styling */
 .theme-toggle {
   position: absolute;
   top: 15px;
   right: 15px;
   z-index: 1000;
+}
+
+@media screen and (max-width: 766px) {
+  .theme-toggle {
+    top: 42px;
+    left: 5vw;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .theme-toggle {
+    top: 42px;
+    left: 5vw;
+  }
 }
 
 .theme-toggle label {
@@ -256,7 +256,7 @@ textarea:focus {
   width: 50px;
   height: 25px;
   background-color: var(--themeColorMain);
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.527);
   border-radius: 15px;
   position: relative;
   transition: background-color 0.3s;
@@ -300,7 +300,6 @@ textarea:focus {
 .theme-toggle button:hover {
   background-color: var(--buttonHoverColor);
 }
-
 
 /* Emoji picker styling */
 .emoji-picker-container {
@@ -415,8 +414,14 @@ h1 {
   padding: 5px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
+}
+
+@media screen and (max-width: 768px) {
+  #header--wrapper {
+    padding-bottom: 20px;
+  }
 }
 
 .header--container {
@@ -430,8 +435,11 @@ h1 {
 .header--container h1 {
   font-size: 1.5em;
   color: #ffffff;
-  margin-top: 5px;
-  
+  margin: 10px;
+}
+
+.header--container .theme-toggle {
+  margin-left: auto;
 }
 
 .btn--sm {
