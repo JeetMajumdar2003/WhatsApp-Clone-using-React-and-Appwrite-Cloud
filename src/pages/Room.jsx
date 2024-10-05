@@ -1,16 +1,19 @@
 import React, { useState, useEffect, useRef } from 'react';
 import client, { databases, DATABASE_ID, COLLECTION_ID_MESSAGES } from '../appwriteConfig';
-import { ID, Query } from 'appwrite';
+import { ID, Query, Role, Permission } from 'appwrite';
 import { Smile, Send, Trash2 } from 'lucide-react';
 import EmojiPicker from 'emoji-picker-react';
+import Header from '../components/Header';
+import { useAuth } from '../utils/AuthContext';
 
 const Room = () => {
     const [messages, setMessages] = useState([]);
     const [messageBody, setMessageBody] = useState('');
     const [isDarkMode, setIsDarkMode] = useState(true);
     const [showEmojiPicker, setShowEmojiPicker] = useState(false);
-    const [onlineUsers] = useState(['Alice', 'Bob', 'Charlie']); // Simulated online users
     const messagesEndRef = useRef(null);
+
+    const { user } = useAuth()
 
     // Fetch messages and set theme on component mount and theme change
     useEffect(() => {
@@ -111,16 +114,22 @@ const Room = () => {
         if (!messageBody.trim()) return;
 
         const payload = {
+            user_id: user.$id,
+            username: user.name,
             body: messageBody,
-            username: 'CurrentUser', // replace with actual user management
         };
+
+        const permissions = [
+            Permission.write(Role.user(user.$id)),
+        ]
 
         try {
             const response = await databases.createDocument(
                 DATABASE_ID,
                 COLLECTION_ID_MESSAGES,
                 ID.unique(),
-                payload
+                payload,
+                permissions
             );
             // setMessages((prevMessages) => [...prevMessages, response]);
             setMessageBody('');
@@ -182,26 +191,22 @@ const Room = () => {
                 </label>
             </div>
             <main className="container">
+                <Header />
                 <div className="room--container">
                     <div className="online-users">
                         <h3>Online Users</h3>
-                        {onlineUsers.map((user, index) => (
-                            <div key={index} className="online-user">
-                                <span className="online-indicator"></span>
-                                {user}
-                            </div>
-                        ))}
                     </div>
                     <div className="messages-container">
                         {messages.map((message) => (
-                            <div key={message.$id} className={`message--wrapper ${message.username === 'CurrentUser' ? 'current-user' : ''}`}>
+                            <div key={message.$id} className={`message--wrapper ${message.username === user.name ? 'current-user' : ''}`}>
                                 <div className="message--header">
                                     <h3>{message?.username}</h3>
                                     <small className="message-timestamp">
                                         {new Date(message.$createdAt).toLocaleString()}
-                                        <button type="button" className="action-button" onClick={() => { deleteMessage(message.$id) }}>
-                                            <Trash2 />
-                                        </button>
+                                        {message.$permissions?.includes(`delete(\"user:${user.$id}\")`) &&
+                                            <button type="button" className="trash-btn action-button" onClick={() => { deleteMessage(message.$id) }}>
+                                                <Trash2 size={18} />
+                                            </button>}
                                     </small>
                                 </div>
                                 <div className="message--body">
