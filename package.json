@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "homepage": "https://github.com/JeetMajumdar2003/WhatsApp-Clone-using-React-and-Appwrite-Cloud",
+  "homepage": "https://jeetmajumdar2003.github.io/WhatsApp-Clone-using-React-and-Appwrite-Cloud/",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
