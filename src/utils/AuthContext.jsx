@@ -1,5 +1,5 @@
 import { createContext, useEffect, useState, useContext } from "react";
-import { account } from "../appwriteConfig";
+import { account, databases, DATABASE_ID, COLLECTION_ID_USERS } from "../appwriteConfig";
 import { useNavigate } from "react-router-dom";
 import { ID } from "appwrite";
 
@@ -60,7 +60,7 @@ const AuthProvider = ({ children }) => {
 
         try {
             // Create a new user account
-            await account.create(
+            const response = await account.create(
                 ID.unique(),
                 credentials.email,
                 credentials.password,
@@ -68,6 +68,18 @@ const AuthProvider = ({ children }) => {
             );
             // Login the user directly after registration
             await account.createEmailPasswordSession(credentials.email, credentials.password);
+
+            // Create user document in database
+            await databases.createDocument(
+                DATABASE_ID,
+                COLLECTION_ID_USERS,
+                response.$id,
+                {
+                    username: credentials.username,
+                    email: credentials.email,
+                }
+            );
+
             // Get account details and set user state
             const accountDetails = await account.get();
             setUser(accountDetails);

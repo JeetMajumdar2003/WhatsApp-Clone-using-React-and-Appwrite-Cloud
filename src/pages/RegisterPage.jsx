@@ -21,13 +21,13 @@ function RegisterPage() {
     };
 
     return (
-        <div className='auth--container'>
-            <div className="form--wrapper">
-                <h1>Register Page</h1>
+        <div className='h-screen flex items-center justify-center bg-[#121212]'>
+            <div className="w-full max-w-[400px] p-8 bg-[#1e1e1e] rounded-lg shadow-lg">
+                <h1 className="text-center mb-4 text-2xl font-bold text-[#e0e0e0]">Register Page</h1>
                 <form action="submit" onSubmit={(e) => {handleUserRegister(e, credentials)}}>
                     {/* Username field */}
-                    <div className="field--wrapper">
-                        <label htmlFor="username">Username: </label>
+                    <div className="flex flex-col gap-2 py-2">
+                        <label htmlFor="username" className="text-lg font-medium text-[#e0e0e0]">Username: </label>
                         <input
                             required
                             type="text"
@@ -36,11 +36,12 @@ function RegisterPage() {
                             placeholder='Enter your username'
                             value={credentials.username}
                             onChange={handleInputChange}
+                            className="p-2 text-base border border-[#333333] rounded bg-[#262626] text-[#e0e0e0] focus:outline-none focus:border-[#009688]"
                         />
                     </div>
                     {/* Email field */}
-                    <div className="field--wrapper">
-                        <label htmlFor="email">Email: </label>
+                    <div className="flex flex-col gap-2 py-2">
+                        <label htmlFor="email" className="text-lg font-medium text-[#e0e0e0]">Email: </label>
                         <input
                             required
                             type="email"
@@ -49,11 +50,12 @@ function RegisterPage() {
                             placeholder='Enter your email'
                             value={credentials.email}
                             onChange={handleInputChange}
+                            className="p-2 text-base border border-[#333333] rounded bg-[#262626] text-[#e0e0e0] focus:outline-none focus:border-[#009688]"
                         />
                     </div>
                     {/* Password field */}
-                    <div className="field--wrapper">
-                        <label htmlFor="password">Password: </label>
+                    <div className="flex flex-col gap-2 py-2">
+                        <label htmlFor="password" className="text-lg font-medium text-[#e0e0e0]">Password: </label>
                         <input
                             required
                             type="password"
@@ -62,11 +64,12 @@ function RegisterPage() {
                             placeholder='Enter your password'
                             value={credentials.password}
                             onChange={handleInputChange}
+                            className="p-2 text-base border border-[#333333] rounded bg-[#262626] text-[#e0e0e0] focus:outline-none focus:border-[#009688]"
                         />
                     </div>
                     {/* Confirm Password field */}
-                    <div className="field--wrapper">
-                        <label htmlFor="confirmPassword">Confirm Password: </label>
+                    <div className="flex flex-col gap-2 py-2">
+                        <label htmlFor="confirmPassword" className="text-lg font-medium text-[#e0e0e0]">Confirm Password: </label>
                         <input
                             required
                             type="password"
@@ -75,16 +78,17 @@ function RegisterPage() {
                             placeholder='Confirm your password'
                             value={credentials.confirmPassword}
                             onChange={handleInputChange}
+                            className="p-2 text-base border border-[#333333] rounded bg-[#262626] text-[#e0e0e0] focus:outline-none focus:border-[#009688]"
                         />
                     </div>
                     {/* Submit button */}
-                    <div className="field--wrapper">
-                        <button className='btn btn--lg' type='submit'>Register</button>
+                    <div className="flex flex-col gap-2 py-2 mt-4">
+                        <button className='px-4 py-2 text-base bg-[#009688] text-white rounded hover:bg-[#00796b] transition-colors cursor-pointer' type='submit'>Register</button>
                     </div>
                 </form>
                 {/* Link to login page */}
-                <div className="field--wrapper">
-                    <p>Already have an account? <Link to="/login">Go to Login Page</Link></p>
+                <div className="flex flex-col gap-2 py-2 text-center">
+                    <p className="text-[#b0b0b0]">Already have an account? <Link to="/login" className="text-[#009688] hover:text-[#00796b] transition-colors">Go to Login Page</Link></p>
                 </div>
             </div>
         </div>

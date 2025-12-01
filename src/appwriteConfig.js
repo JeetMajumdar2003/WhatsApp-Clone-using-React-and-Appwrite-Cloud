@@ -4,6 +4,8 @@ export const API_ENDPOINT = import.meta.env.VITE_APPWRITE_ENDPOINT
 export const PROJECT_ID = import.meta.env.VITE_APPWRITE_PROJECT_ID
 export const DATABASE_ID = import.meta.env.VITE_APPWRITE_DATABASE_ID
 export const COLLECTION_ID_MESSAGES = import.meta.env.VITE_APPWRITE_COLLECTION_ID_MESSAGES
+export const COLLECTION_ID_USERS = import.meta.env.VITE_APPWRITE_COLLECTION_ID_USERS
+export const COLLECTION_ID_CONVERSATIONS = import.meta.env.VITE_APPWRITE_COLLECTION_ID_CONVERSATIONS
 export const BUCKET_ID = import.meta.env.VITE_APPWRITE_BUCKET_ID
 
 const client = new Client()
